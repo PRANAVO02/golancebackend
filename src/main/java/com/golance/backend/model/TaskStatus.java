@@ -2,6 +2,9 @@ package com.golance.backend.model;
 
 public enum TaskStatus {
     OPEN,
+    ALLOCATED,
     IN_PROGRESS,
-    COMPLETED
+    PENDING,
+    COMPLETED,
+    CANCELLED
 }

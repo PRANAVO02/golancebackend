@@ -1,9 +1,6 @@
 package com.golance.backend.model;
 
-
 import jakarta.persistence.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name="users")
@@ -13,58 +10,46 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false , unique = true)
     private String username;
 
-
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String password;
 
-    private String role="STUDENT";
+    private String role = "STUDENT";
 
-//    @Column(nullable = false)
-//    private LocalDateTime registered_on;
+    // New fields
+    private String skills;        // e.g., "Java, Spring Boot"
+    private String studyingYear;  // e.g., "2nd Year"
+    private String department;    // e.g., "CSE"
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
-    public String getUsername() {
-        return username;
-    }
+    // Getters & Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String getSkills() { return skills; }
+    public void setSkills(String skills) { this.skills = skills; }
 
-    public String getRole() {
-        return role;
-    }
+    public String getStudyingYear() { return studyingYear; }
+    public void setStudyingYear(String studyingYear) { this.studyingYear = studyingYear; }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
+    public String getDepartment() { return department; }
+    public void setDepartment(String department) { this.department = department; }
 }

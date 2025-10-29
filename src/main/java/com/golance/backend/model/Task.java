@@ -1,7 +1,10 @@
 package com.golance.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tasks")
@@ -19,81 +22,85 @@ public class Task {
 
     private LocalDate deadline;
 
-    private TaskStatus status;
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status = TaskStatus.OPEN;
 
     private int creditsOffered;
 
-//     Relationship: A Task is posted by ONE User
     @ManyToOne
     @JoinColumn(name = "posted_by", nullable = false)
     private User postedBy;
-//    private Long postedById;
 
-//getter & setter
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Bid> bids;
 
-    public Long getId() {
-        return id;
+    @ManyToOne
+    @JoinColumn(name = "assigned_user")
+    private User assignedUser;
+
+    @Column(name = "file_path")
+    private String filePath;
+
+    @Column(name = "F_filePath")
+    private String freelancerFilePath;
+
+//    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<TaskFile> files = new ArrayList<>();
+//
+
+    // Getters & Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
+
+    public LocalDate getDeadline() { return deadline; }
+    public void setDeadline(LocalDate deadline) { this.deadline = deadline; }
+
+    public TaskStatus getStatus() { return status; }
+    public void setStatus(TaskStatus status) { this.status = status; }
+
+    public int getCreditsOffered() { return creditsOffered; }
+    public void setCreditsOffered(int creditsOffered) { this.creditsOffered = creditsOffered; }
+
+    public User getPostedBy() { return postedBy; }
+    public void setPostedBy(User postedBy) { this.postedBy = postedBy; }
+
+    public List<Bid> getBids() { return bids; }
+    public void setBids(List<Bid> bids) { this.bids = bids; }
+
+    public User getAssignedUser() { return assignedUser; }
+    public void setAssignedUser(User assignedUser) { this.assignedUser = assignedUser; }
+
+    public String getFilePath() {
+        return filePath;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
-    public String getTitle() {
-        return title;
+    public String getFreelancerFilePath() {
+        return freelancerFilePath;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setFreelancerFilePath(String freelancerFilePath) {
+        this.freelancerFilePath = freelancerFilePath;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public LocalDate getDeadline() {
-        return deadline;
-    }
-
-    public void setDeadline(LocalDate deadline) {
-        this.deadline = deadline;
-    }
-
-    public TaskStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TaskStatus status) {
-        this.status = status;
-    }
-
-    public int getCreditsOffered() {
-        return creditsOffered;
-    }
-
-    public void setCreditsOffered(int creditsOffered) {
-        this.creditsOffered = creditsOffered;
-    }
-
-    public User getPostedBy() {
-        return postedBy;
-    }
-
-    public void setPostedBy(User postedBy) {
-        this.postedBy = postedBy;
-    }
-
-
+    //    public List<TaskFile> getFiles() {
+//        return files;
+//    }
+//
+//    public void setFiles(List<TaskFile> files) {
+//        this.files = files;
+//    }
 }
