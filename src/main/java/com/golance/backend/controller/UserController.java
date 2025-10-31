@@ -1,23 +1,24 @@
 package com.golance.backend.controller;
 
 import com.golance.backend.model.User;
+import com.golance.backend.repository.UserRepository;
 import com.golance.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins = "http://localhost:5173")
 public class UserController {
-
 
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserRepository userRepository;
 
     //registering a new user
     @PostMapping("/register")
@@ -28,6 +29,17 @@ public class UserController {
     public User getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
+
+    @PutMapping("/{id}/rating")
+    public ResponseEntity<User> updateUserRating(
+            @PathVariable Long id,
+            @RequestBody Map<String, Integer> request) {
+        int rating = request.get("rating");
+        userService.updateUserRating(id, rating);
+        User updatedUser = userService.getUserById(id);
+        return ResponseEntity.ok(updatedUser);
+    }
+
 
 //    @PostMapping("/register")
 //    public ResponseEntity<?> registerUser(@RequestBody User user) {

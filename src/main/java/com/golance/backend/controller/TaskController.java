@@ -21,11 +21,12 @@ import java.nio.file.*;
 import java.nio.file.StandardCopyOption; // ✅ Needed
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/tasks")
-@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins = "http://localhost:5173")
 public class TaskController {
 
     private static final String UPLOAD_DIR = "uploads/";
@@ -271,4 +272,31 @@ public class TaskController {
         Task updatedTask = taskService.updateTask(id, task);
         return taskService.toDto(updatedTask);
     }
+    @PutMapping("/{taskId}/rate")
+    public ResponseEntity<Task> rateTask(
+            @PathVariable Long taskId,
+            @RequestBody Map<String, Integer> request) {
+
+        int rating = request.get("rating");
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        // ✅ TaskStatus is ENUM, so compare directly
+        if (task.getStatus() != TaskStatus.COMPLETED) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        // ✅ Save the rating for this task
+        task.setRating(rating);
+        taskRepository.save(task);
+
+        // ✅ Update assigned user's overall rating
+        if (task.getAssignedUser() != null) {
+            userService.updateUserRating(task.getAssignedUser().getId(), rating);
+        }
+
+        return ResponseEntity.ok(task);
+    }
+
 }

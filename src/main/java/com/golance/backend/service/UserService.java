@@ -86,4 +86,20 @@ public User registerUser(User user) {
     }
 
 
+    public void updateUserRating(Long userId, int newRating) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        double totalScore = user.getRating() * user.getRatingCount();
+        user.setRatingCount(user.getRatingCount() + 1);
+        user.setRating((totalScore + newRating) / user.getRatingCount());
+
+        userRepository.save(user);
+    }
+
+
+
+
+
+
 }

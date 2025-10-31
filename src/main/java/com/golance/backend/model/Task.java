@@ -45,9 +45,9 @@ public class Task {
     @Column(name = "F_filePath")
     private String freelancerFilePath;
 
-//    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<TaskFile> files = new ArrayList<>();
-//
+    private Integer rating; // rating given by the task owner to the assigned user
+
+
 
     // Getters & Setters
     public Long getId() { return id; }
@@ -96,11 +96,12 @@ public class Task {
         this.freelancerFilePath = freelancerFilePath;
     }
 
-    //    public List<TaskFile> getFiles() {
-//        return files;
-//    }
-//
-//    public void setFiles(List<TaskFile> files) {
-//        this.files = files;
-//    }
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
+
 }

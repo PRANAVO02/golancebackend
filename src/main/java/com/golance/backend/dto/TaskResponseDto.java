@@ -18,7 +18,6 @@ public class TaskResponseDto {
     private String postedByName;
     private String filePath;
     private String freelancerFilePath;
-
     // getters & setters
 
     public Long getId() {

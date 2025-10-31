@@ -26,6 +26,8 @@ public class User {
     private String studyingYear;  // e.g., "2nd Year"
     private String department;    // e.g., "CSE"
 
+    private double rating = 0.0;
+    private int ratingCount = 0;
 
 
     // Getters & Setters
@@ -52,4 +54,20 @@ public class User {
 
     public String getDepartment() { return department; }
     public void setDepartment(String department) { this.department = department; }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public int getRatingCount() {
+        return ratingCount;
+    }
+
+    public void setRatingCount(int ratingCount) {
+        this.ratingCount = ratingCount;
+    }
 }
