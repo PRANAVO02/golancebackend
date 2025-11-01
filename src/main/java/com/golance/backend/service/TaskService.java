@@ -87,6 +87,7 @@ public class TaskService {
         dto.setPostedByName(task.getPostedBy().getUsername());
         dto.setFilePath(task.getFilePath());
         dto.setFreelancerFilePath(task.getFreelancerFilePath());
+        dto.setRating(task.getRating());
 
         if (task.getAssignedUser() != null) {
             dto.setAssignedUserId(task.getAssignedUser().getId());

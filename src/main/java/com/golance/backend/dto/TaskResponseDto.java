@@ -18,6 +18,9 @@ public class TaskResponseDto {
     private String postedByName;
     private String filePath;
     private String freelancerFilePath;
+    private Integer rating;
+
+
     // getters & setters
 
     public Long getId() {
@@ -130,5 +133,13 @@ public class TaskResponseDto {
 
     public void setFreelancerFilePath(String freelancerFilePath) {
         this.freelancerFilePath = freelancerFilePath;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
     }
 }

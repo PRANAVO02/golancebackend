@@ -1,12 +1,13 @@
 package com.golance.backend.controller;
 
+import com.golance.backend.dto.StatusUpdateDto;
 import com.golance.backend.dto.TaskRequestDto;
 import com.golance.backend.dto.TaskResponseDto;
-import com.golance.backend.dto.StatusUpdateDto;
 import com.golance.backend.model.Task;
 import com.golance.backend.model.TaskStatus;
 import com.golance.backend.model.User;
 import com.golance.backend.repository.TaskRepository;
+import com.golance.backend.repository.UserRepository;
 import com.golance.backend.service.TaskService;
 import com.golance.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import java.nio.file.*;
-import java.nio.file.StandardCopyOption; // ✅ Needed
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,6 +43,9 @@ public class TaskController {
 
     @Autowired
     private TaskRepository taskRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
 
 //     CREATE
@@ -152,7 +158,7 @@ public class TaskController {
             Task task = taskRepository.findById(taskId)
                     .orElseThrow(() -> new RuntimeException("Task not found"));
 
-            // ✅ Save freelancer file path
+               // ✅ Save freelancer file path
             task.setFreelancerFilePath(filename);
             taskRepository.save(task);
 
@@ -272,31 +278,72 @@ public class TaskController {
         Task updatedTask = taskService.updateTask(id, task);
         return taskService.toDto(updatedTask);
     }
-    @PutMapping("/{taskId}/rate")
-    public ResponseEntity<Task> rateTask(
-            @PathVariable Long taskId,
-            @RequestBody Map<String, Integer> request) {
+//
+//    @PutMapping("/{taskId}/rate")
+//    public ResponseEntity<Task> rateTask(
+//            @PathVariable Long taskId,
+//            @RequestBody Map<String, Integer> request) {
+//
+//        int rating = request.get("rating");
+//
+//        Task task = taskRepository.findById(taskId)
+//                .orElseThrow(() -> new RuntimeException("Task not found"));
+//
+//        // ✅ TaskStatus is ENUM, so compare directly
+//        if (task.getStatus() != TaskStatus.COMPLETED) {
+//            return ResponseEntity.badRequest().body(null);
+//        }
+//
+//        // ✅ Save the rating for this task
+//        task.setRating(rating);
+//        taskRepository.save(task);
+//
+//        // ✅ Update assigned user's overall rating
+//        if (task.getAssignedUser() != null) {
+//            userService.updateUserRating(task.getAssignedUser().getId(), rating);
+//        }
+//
+//        return ResponseEntity.ok(task);
+//    }
+@PutMapping("/{taskId}/rate")
+public ResponseEntity<?> rateTask(
+        @PathVariable Long taskId,
+        @RequestBody Map<String, Integer> ratingData) {
 
-        int rating = request.get("rating");
+    int rating = ratingData.get("rating");
 
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+    Task task = taskRepository.findById(taskId)
+            .orElseThrow(() -> new RuntimeException("Task not found"));
 
-        // ✅ TaskStatus is ENUM, so compare directly
-        if (task.getStatus() != TaskStatus.COMPLETED) {
-            return ResponseEntity.badRequest().body(null);
-        }
-
-        // ✅ Save the rating for this task
-        task.setRating(rating);
-        taskRepository.save(task);
-
-        // ✅ Update assigned user's overall rating
-        if (task.getAssignedUser() != null) {
-            userService.updateUserRating(task.getAssignedUser().getId(), rating);
-        }
-
-        return ResponseEntity.ok(task);
+    // ✅ Check if task is completed
+    if (task.getStatus() != TaskStatus.COMPLETED) {
+        return ResponseEntity.badRequest().body("Cannot rate an incomplete task.");
     }
+
+    // ✅ Prevent duplicate rating
+    if (task.getRating() != null) {
+        return ResponseEntity.badRequest().body("Rating already given for this task.");
+    }
+
+    // ✅ Save rating for this task
+    task.setRating(rating);
+    taskRepository.save(task);
+
+    // ✅ Update assigned user's overall rating
+    User assignedUser = task.getAssignedUser();
+    if (assignedUser != null) {
+        double currentTotal = assignedUser.getRating() * assignedUser.getRatingCount();
+        int newCount = assignedUser.getRatingCount() + 1;
+        double newAvg = (currentTotal + rating) / newCount;
+
+        assignedUser.setRating(newAvg);
+        assignedUser.setRatingCount(newCount);
+        userRepository.save(assignedUser);
+    }
+
+    return ResponseEntity.ok(task);
+}
+
+
 
 }

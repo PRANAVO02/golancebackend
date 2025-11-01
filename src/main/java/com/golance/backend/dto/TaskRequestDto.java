@@ -14,6 +14,8 @@ public class TaskRequestDto {
     private String assignedUserName; // add this field
     private String filePath;
     private String freelancerFilePath;
+    private Integer rating;
+
 
     // Getters & Setters
     public String getTitle() { return title; }
@@ -62,5 +64,13 @@ public class TaskRequestDto {
 
     public void setFreelancerFilePath(String freelancerFilePath) {
         this.freelancerFilePath = freelancerFilePath;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
     }
 }
