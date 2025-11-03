@@ -3,7 +3,6 @@ package com.golance.backend.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,6 +25,8 @@ public class Task {
     private TaskStatus status = TaskStatus.OPEN;
 
     private int creditsOffered;
+
+    private int allocatedCredits;
 
     @ManyToOne
     @JoinColumn(name = "posted_by", nullable = false)
@@ -102,6 +103,13 @@ public class Task {
 
     public void setRating(Integer rating) {
         this.rating = rating;
+    }
+
+    public Integer getAllocatedCredits() {
+        return allocatedCredits;
+    }
+    public void setAllocatedCredits(Integer allocatedCredits) {
+        this.allocatedCredits = allocatedCredits;
     }
 
 }

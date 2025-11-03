@@ -61,8 +61,15 @@ public class TaskService {
         Bid bid = bidRepository.findById(bidId)
                 .orElseThrow(() -> new RuntimeException("Bid not found"));
 
+        // Assign bidder
         task.setAssignedUser(bid.getBidder());
+
+        // Store actual agreed amount from bid
+        task.setAllocatedCredits(bid.getCredits());
+
+        // Update task status
         task.setStatus(TaskStatus.ALLOCATED);
+
         return taskRepository.save(task);
     }
 
@@ -88,6 +95,8 @@ public class TaskService {
         dto.setFilePath(task.getFilePath());
         dto.setFreelancerFilePath(task.getFreelancerFilePath());
         dto.setRating(task.getRating());
+        dto.setAllocatedCredits(task.getAllocatedCredits());
+
 
         if (task.getAssignedUser() != null) {
             dto.setAssignedUserId(task.getAssignedUser().getId());

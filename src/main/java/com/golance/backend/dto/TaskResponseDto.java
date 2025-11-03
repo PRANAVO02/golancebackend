@@ -20,6 +20,7 @@ public class TaskResponseDto {
     private String freelancerFilePath;
     private Integer rating;
 
+    private Integer allocatedCredits;
 
     // getters & setters
 
@@ -141,5 +142,12 @@ public class TaskResponseDto {
 
     public void setRating(Integer rating) {
         this.rating = rating;
+    }
+    public Integer getAllocatedCredits() {
+        return allocatedCredits;
+    }
+
+    public void setAllocatedCredits(Integer allocatedCredits) {
+        this.allocatedCredits = allocatedCredits;
     }
 }
