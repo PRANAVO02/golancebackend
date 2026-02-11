@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+
+  mysql:
+    image: mysql:8.0.36
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_DATABASE: golance
+    ports:
+      - "3307:3306"
+
+  backend:
+    build: .
+    container_name: springboot
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/golance
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: test
+      SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT: 60000
+    depends_on:
+      - mysql
