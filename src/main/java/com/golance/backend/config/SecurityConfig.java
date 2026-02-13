@@ -91,7 +91,7 @@ public class SecurityConfig {
         // ⭐ use patterns (works for localhost + vercel + any port)
         configuration.setAllowedOriginPatterns(List.of(
                 "http://localhost:*",
-                "https://golancefrontend.vercel.app"
+                "https://golance.vercel.app"
         ));
 
         configuration.setAllowedMethods(List.of("*"));
