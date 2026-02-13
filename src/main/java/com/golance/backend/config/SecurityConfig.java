@@ -35,54 +35,79 @@ public class SecurityConfig {
     @Autowired
     private JwtFilter jwtFilter;
 
+    // =========================
+    // 🔐 SECURITY RULES
+    // =========================
     @Bean
     public DefaultSecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/tasks/download/**").permitAll()
 
-                        // Public endpoints
+        http
+                // ✅ Enable CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+                // ✅ Disable CSRF (REST API)
+                .csrf(csrf -> csrf.disable())
+
+                // ✅ Stateless JWT
+                .sessionManagement(sess ->
+                        sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                .authorizeHttpRequests(authz -> authz
+
+                        // =========================
+                        // ✅ PUBLIC (VERY IMPORTANT FIRST)
+                        // =========================
                         .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users/login").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()   // if you have JWT auth endpoints
-                        .requestMatchers("/api/tasks/download/**").permitAll() // ✅ allow downloads without auth
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/tasks/download/**").permitAll()
 
-                        // Protected endpoints
+                        // =========================
+                        // 🔒 PROTECTED
+                        // =========================
                         .requestMatchers("/api/tasks/**").authenticated()
                         .requestMatchers("/api/bids/**").authenticated()
                         .requestMatchers("/api/users/**").authenticated()
 
-                        // Any other request
+                        // everything else
                         .anyRequest().permitAll()
                 )
+
+                // ✅ JWT filter
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
 
-    // CORS configuration bean
+    // =========================
+    // 🌍 CORS CONFIG (VERY IMPORTANT)
+    // =========================
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(
-                List.of(
-                        "http://localhost:5173",
-                        "https://golancefrontend.vercel.app"
-                )
-        );
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        // ⭐ use patterns (works for localhost + vercel + any port)
+        configuration.setAllowedOriginPatterns(List.of(
+                "http://localhost:*",
+                "https://golancefrontend.vercel.app"
+        ));
+
+        configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true); // allow cookies if needed
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 
+
+    // =========================
+    // AUTH PROVIDER
+    // =========================
     @Bean
     @SuppressWarnings("deprecation")
     public DaoAuthenticationProvider authenticationProvider() {
@@ -93,7 +118,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager AuthenticationManager() {
+    public AuthenticationManager authenticationManager() {
         return new ProviderManager(List.of(authenticationProvider()));
     }
 }
